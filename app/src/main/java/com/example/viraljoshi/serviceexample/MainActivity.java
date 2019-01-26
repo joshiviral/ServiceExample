@@ -1,7 +1,10 @@
 package com.example.viraljoshi.serviceexample;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,8 +16,19 @@ import com.example.viraljoshi.serviceexample.service.ForeGroundService;
 import com.example.viraljoshi.serviceexample.utils.IConstants;
 
 public class MainActivity extends AppCompatActivity {
+    TextView txtForegroundservice;
+    Button btnStartForegoundService, btnStopForegroundService;
+    private IntentFilter mIntentFilter;
 
-    Button btnStartForegoundService,btnStopForegroundService;
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            txtForegroundservice.setText("status=" + intent.getAction());
+
+
+        }
+
+    };
 
 
     @Override
@@ -23,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnStartForegoundService = (Button) findViewById(R.id.btn_start_foreground_service);
         btnStopForegroundService = (Button) findViewById(R.id.btn_stop_foreground_service);
-
+        txtForegroundservice = (TextView) findViewById(R.id.txt_foreground_Service);
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(IConstants.Actions.NEXT_ACTION);
+        mIntentFilter.addAction(IConstants.Actions.PLAY_ACTION);
+        mIntentFilter.addAction(IConstants.Actions.PREV_ACTION);
         btnStartForegoundService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,5 +59,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mReceiver,mIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mReceiver);
+        super.onPause();
     }
 }

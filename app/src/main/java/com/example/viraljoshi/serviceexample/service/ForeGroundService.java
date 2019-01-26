@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,7 +25,7 @@ import com.example.viraljoshi.serviceexample.utils.IConstants;
 
 public class ForeGroundService extends Service {
     @Nullable
-    @Override
+
     public IBinder onBind(Intent intent) {
         return null;
     }
@@ -40,6 +41,10 @@ public class ForeGroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.i("ForeGroundService", "onStartCommand Actions =" + intent.getAction());
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(intent.getAction());
+        sendBroadcast(broadcastIntent);
 
         if (intent.getAction().equals(IConstants.Actions.STARTFOREGROUND_ACTION)) {
             Log.i("Intent", "Received Start Foreground Intent ");
@@ -108,7 +113,10 @@ public class ForeGroundService extends Service {
             stopSelf();
 
         }
+
+
         return START_STICKY;
+
     }
     @Override
     public void onDestroy() {
